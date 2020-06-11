@@ -34,3 +34,14 @@ function addGreeting() {
     }
   );
 }
+
+function displayJsonMessages() {
+  fetch('data').then(response => response.json()).then(messages => {
+    const messageContainer = document.getElementById('message-container');
+    messageContainer.innerHTML = '';
+    for (message of messages) {
+      messageContainer.innerHTML += message;
+      messageContainer.innerHTML += '<br>';
+    }
+  });
+}
