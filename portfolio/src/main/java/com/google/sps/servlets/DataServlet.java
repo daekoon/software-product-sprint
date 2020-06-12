@@ -28,12 +28,10 @@ import javax.servlet.http.HttpServletResponse;
 public class DataServlet extends HttpServlet {
 
   private List<String> messages;
-  private int curIndex;
 
   @Override
   public void init() {
     messages = new ArrayList<String>();
-    curIndex = 0;
     messages.add("Example message 1");
     messages.add("Example message 2");
     messages.add("Example message 3");
