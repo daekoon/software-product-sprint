@@ -32,7 +32,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /** Servlet that returns some example content. TODO: modify this file to handle comments data */
-@WebServlet("/comment")
+@WebServlet("/comments")
 public class CommentsServlet extends HttpServlet {
 
   @Override

@@ -15,7 +15,7 @@
 document.addEventListener('DOMContentLoaded', displayComments(), false);
 
 function displayComments() {
-  fetch('/comment').then(response => response.json()).then(comments => {
+  fetch('/comments').then(response => response.json()).then(comments => {
     const commentsContainer = document.getElementById('comments-container');
     var html = '<table id="commentsTable" width="80%">';
     html += '<tr>';
