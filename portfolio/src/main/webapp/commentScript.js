@@ -25,7 +25,7 @@ function displayComments() {
     for (comment of comments) {
       html += '<tr>';
       html += '<td>';
-      html += comment.userName;
+      html += comment.username;
       html += '</td>';
       html += '<td>';
       html += comment.content;
