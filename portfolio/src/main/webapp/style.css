@@ -40,4 +40,16 @@
   color: white;
 }
 
-
+/*
+  --------------------------Comments Table-----------------------------
+*/
+table, th, td{
+  border: 1px solid black;
+}
+th, td {
+  padding-left: 3px;
+  padding-right: 3px;
+  padding-top: 2px;
+  padding-bottom: 2px;
+  text-align: center;
+}

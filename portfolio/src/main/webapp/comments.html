@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Daekoon's Portfolio</title>
+    <link rel="stylesheet" href="style.css">
+    <script defer src="commentScript.js"></script>
+  </head>
+  <body>
+    <div class="topnav">
+      <a  href="index.html">Home</a>
+      <a class="active" href="comments.html">Comments</a>
+      <a href="https://github.com/daekoon">Github</a>
+      <a href="https://www.linkedin.com/in/daekoon">LinkedIn </a>
+    </div>
+    <div id="content">
+      <h1>Posted Comments</h1>
+      <div id="comments-container"></div>
+      <br/>
+      <h2>Type new comments</h2>
+      <div id="comments-form">
+        <form action="/comments" method="POST" id="commentform">
+          <b>Name:</b> <input type="text" name="username"> <br/>
+          <b>Comment:</b><br/>
+          <textarea rows="4" cols="50" name="comment"></textarea>
+          <br/>
+          <input type="submit" />
+        </form>
+      </div>
+    </div>
+  </body>
+</html>
