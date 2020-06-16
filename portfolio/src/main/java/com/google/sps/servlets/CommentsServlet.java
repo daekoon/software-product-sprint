@@ -35,9 +35,11 @@ import javax.servlet.http.HttpServletResponse;
 @WebServlet("/comments")
 public class CommentsServlet extends HttpServlet {
 
+  DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+    
     List<Comment> comments = new ArrayList<Comment>();
 
     Query query = new Query("Comment").addSort("timestamp", SortDirection.DESCENDING);
@@ -64,7 +66,6 @@ public class CommentsServlet extends HttpServlet {
     String content = request.getParameter("comment");
     long timestamp = System.currentTimeMillis();
 
-    DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     Entity commentEntity = new Entity("Comment");
     commentEntity.setProperty("username", username);
     commentEntity.setProperty("content", content);
