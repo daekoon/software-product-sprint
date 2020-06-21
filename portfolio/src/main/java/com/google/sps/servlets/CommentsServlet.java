@@ -69,10 +69,10 @@ public class CommentsServlet extends HttpServlet {
 
     for (Entity entity : results.asIterable()) {
       long id = entity.getKey().getId();
-      String username = (String) entity.getProperty("username");
+      String email = (String) entity.getProperty("email");
       String content = (String) entity.getProperty("content");
 
-      Comment comment = new Comment(id, username, content);
+      Comment comment = new Comment(id, email, content);
       comments.add(comment);
     }
 
@@ -89,12 +89,11 @@ public class CommentsServlet extends HttpServlet {
       response.sendRedirect(loginURL);
     }
 
-    String username = request.getParameter("username");
     String content = request.getParameter("comment");
     long timestamp = System.currentTimeMillis();
 
     Entity commentEntity = new Entity("Comment");
-    commentEntity.setProperty("username", username);
+    commentEntity.setProperty("email", userService.getCurrentUser().getEmail());
     commentEntity.setProperty("content", content);
     commentEntity.setProperty("timestamp", timestamp);
 

@@ -29,13 +29,13 @@ function displayComments() {
     html += '<h1>Posted Comments</h1><br/>';
     html += '<table id="commentsTable" width="80%">';
     html += '<tr>';
-    html += '<th width="30%">Username</th>'
+    html += '<th width="30%">Email</th>'
     html += '<th>Comment</th>'
     html += '</tr>';
     for (comment of response.comments) {
       html += '<tr>';
       html += '<td>';
-      html += comment.username;
+      html += comment.email;
       html += '</td>';
       html += '<td>';
       html += comment.content;
@@ -45,7 +45,6 @@ function displayComments() {
     html += '</table>';
     html += '<br/><div id="comments-form">';
     html += '<form action="/comments" method="POST" id="commentform">';
-    html += '<b>Name:</b> <input type="text" name="username"> <br/>';
     html += '<b>Comment:</b><br/>';
     html += '<textarea rows="4" cols="50" name="comment"></textarea>';
     html += '<br/>';
