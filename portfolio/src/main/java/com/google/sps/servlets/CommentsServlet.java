@@ -45,7 +45,6 @@ public class CommentsServlet extends HttpServlet {
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
   
     response.setContentType("application/json");
-
     
     Gson gson = new Gson();
     CommentsResponse resp;
@@ -53,7 +52,7 @@ public class CommentsServlet extends HttpServlet {
     if (!userService.isUserLoggedIn()) {
       String loginURL = userService.createLoginURL("/comments.html");
 
-      resp = new CommentsResponse(false, null, loginURL, null);
+      resp = new CommentsResponse(false, null, loginURL, null, null);
 
       String json = gson.toJson(resp);
       response.getWriter().println(json);
@@ -61,6 +60,7 @@ public class CommentsServlet extends HttpServlet {
     }
 
     String logoutURL = userService.createLogoutURL("/index.html");
+    String currentUserEmail = userService.getCurrentUser().getEmail();
 
     List<Comment> comments = new ArrayList<Comment>();
 
@@ -76,7 +76,7 @@ public class CommentsServlet extends HttpServlet {
       comments.add(comment);
     }
 
-    resp = new CommentsResponse(true, comments, null, logoutURL);
+    resp = new CommentsResponse(true, comments, null, logoutURL, currentUserEmail);
 
     String json = gson.toJson(resp);
     response.getWriter().println(json);

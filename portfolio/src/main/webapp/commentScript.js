@@ -24,7 +24,7 @@ function displayComments() {
       commentsContainer.innerHTML = html;
       return;
     }
-    
+    html += '<p>Currently logged in as ' + response.currentUserEmail + '</p>';
     html += '<p>Logout <a href=\"' + response.logoutURL + '\" >here</a>.</p>';
     html += '<h1>Posted Comments</h1><br/>';
     html += '<table id="commentsTable" width="80%">';

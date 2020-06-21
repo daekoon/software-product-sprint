@@ -11,12 +11,19 @@ public class CommentsResponse {
     private List<Comment> comments;
     private String loginURL;
     private String logoutURL;
+    private String currentUserEmail;
 
-    public CommentsResponse(boolean loggedIn, List<Comment> comments, String loginURL, String logoutURL) {
+    public CommentsResponse(
+            boolean loggedIn,
+            List<Comment> comments,
+            String loginURL,
+            String logoutURL,
+            String currentUserEmail) {
         this.loggedIn = loggedIn;
         this.comments = comments;
         this.loginURL = loginURL;
         this.logoutURL = logoutURL;
+        this.currentUserEmail = currentUserEmail;
     }
     
 }
