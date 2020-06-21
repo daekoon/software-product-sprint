@@ -20,8 +20,11 @@ import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Query.SortDirection;
+import com.google.appengine.api.users.UserService;
+import com.google.appengine.api.users.UserServiceFactory;
 import com.google.gson.Gson;
 import com.google.sps.data.Comment;
+import com.google.sps.data.CommentsResponse;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -36,10 +39,29 @@ import javax.servlet.http.HttpServletResponse;
 public class CommentsServlet extends HttpServlet {
 
   DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+  UserService userService = UserServiceFactory.getUserService();
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
+  
+    response.setContentType("application/json");
+
     
+    Gson gson = new Gson();
+    CommentsResponse resp;
+
+    if (!userService.isUserLoggedIn()) {
+      String loginURL = userService.createLoginURL("/comments.html");
+
+      resp = new CommentsResponse(false, null, loginURL, null);
+
+      String json = gson.toJson(resp);
+      response.getWriter().println(json);
+      return;
+    }
+
+    String logoutURL = userService.createLogoutURL("/index.html");
+
     List<Comment> comments = new ArrayList<Comment>();
 
     Query query = new Query("Comment").addSort("timestamp", SortDirection.DESCENDING);
@@ -54,14 +76,19 @@ public class CommentsServlet extends HttpServlet {
       comments.add(comment);
     }
 
-    Gson gson = new Gson();
-    String json = gson.toJson(comments);
-    response.setContentType("application/json");
+    resp = new CommentsResponse(true, comments, null, logoutURL);
+
+    String json = gson.toJson(resp);
     response.getWriter().println(json);
   }
 
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    if (!userService.isUserLoggedIn()) {
+      String loginURL = userService.createLoginURL("/comments.html");
+      response.sendRedirect(loginURL);
+    }
+
     String username = request.getParameter("username");
     String content = request.getParameter("comment");
     long timestamp = System.currentTimeMillis();
