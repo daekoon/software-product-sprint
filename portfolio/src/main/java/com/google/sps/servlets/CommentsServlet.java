@@ -51,11 +51,7 @@ public class CommentsServlet extends HttpServlet {
 
     if (!userService.isUserLoggedIn()) {
       String loginURL = userService.createLoginURL("/comments.html");
-
-      resp = new CommentsResponse(false, null, loginURL, null, null);
-
-      String json = gson.toJson(resp);
-      response.getWriter().println(json);
+      response.sendRedirect(loginURL);
       return;
     }
 
@@ -76,7 +72,7 @@ public class CommentsServlet extends HttpServlet {
       comments.add(comment);
     }
 
-    resp = new CommentsResponse(true, comments, null, logoutURL, currentUserEmail);
+    resp = new CommentsResponse(comments, currentUserEmail);
 
     String json = gson.toJson(resp);
     response.getWriter().println(json);
@@ -87,6 +83,7 @@ public class CommentsServlet extends HttpServlet {
     if (!userService.isUserLoggedIn()) {
       String loginURL = userService.createLoginURL("/comments.html");
       response.sendRedirect(loginURL);
+      return;
     }
 
     String content = request.getParameter("comment");
