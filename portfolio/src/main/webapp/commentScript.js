@@ -15,26 +15,56 @@
 document.addEventListener('DOMContentLoaded', displayComments(), false);
 
 function displayComments() {
-  fetch('/comments').then(response => response.json()).then(comments => {
-    const commentsContainer = document.getElementById('comments-container');
-    var html = '<table id="commentsTable" width="80%">';
-    html += '<tr>';
-    html += '<th width="30%">Username</th>'
-    html += '<th>Comment</th>'
-    html += '</tr>';
-    for (comment of comments) {
-      html += '<tr>';
-      html += '<td>';
-      html += comment.username;
-      html += '</td>';
-      html += '<td>';
-      html += comment.content;
-      html += '</td>';
-      html += '</tr>';
+  fetch('/loginservice?redirect_path=\/comments.html').then(response => response.json()).then(response => {
+    const loginContainer = document.getElementById('login_status');
+    var html = '';
+    console.log(response);
+    if (!response.loggedIn) {
+      html += '<p>You need to be logged in to see this page!</p>';
+      html += '<p>Login <a href=\"' + response.loginURL + '\">here</a>.</p>' 
+      loginContainer.innerHTML = html;
+      return null;
+    } else {
+      html += '<p>Currently logged in as ' + response.currentUserEmail + '</p>';
+      html += '<p>Logout <a href=\"' + response.logoutURL + '\" >here</a>.</p>';
+      loginContainer.innerHTML = html;
+      return true;
     }
-    html += '</table>';
-    console.log(html);
-    commentsContainer.innerHTML = html;
+  }).then(loggedIn => {
+    
+    if (!loggedIn) {
+      return;
+    }
+    
+    fetch('/comments').then(response => response.json()).then(response => { 
+      const commentsContainer = document.getElementById('comments_container');
+      var html = ''
+      html += '<h1>Posted Comments</h1><br/>';
+      html += '<table id="commentsTable" width="80%">';
+      html += '<tr>';
+      html += '<th width="30%">Email</th>'
+      html += '<th>Comment</th>'
+      html += '</tr>';
+      for (comment of response.comments) {
+        html += '<tr>';
+        html += '<td>';
+        html += comment.email;
+        html += '</td>';
+        html += '<td>';
+        html += comment.content;
+        html += '</td>';
+        html += '</tr>';
+      }
+      html += '</table>';
+      html += '<br/><div id="comments-form">';
+      html += '<form action="/comments" method="POST" id="commentform">';
+      html += '<b>Comment:</b><br/>';
+      html += '<textarea rows="4" cols="50" name="comment"></textarea>';
+      html += '<br/>';
+      html += '<input type="submit" />';
+      html += '</form>';
+      html += '</div>';
+      commentsContainer.innerHTML = html;
+    });
   });
 }
-

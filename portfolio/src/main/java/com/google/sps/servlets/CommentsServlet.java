@@ -20,8 +20,11 @@ import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Query.SortDirection;
+import com.google.appengine.api.users.UserService;
+import com.google.appengine.api.users.UserServiceFactory;
 import com.google.gson.Gson;
 import com.google.sps.data.Comment;
+import com.google.sps.data.CommentsResponse;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -31,15 +34,26 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-/** Servlet that returns some example content. TODO: modify this file to handle comments data */
 @WebServlet("/comments")
 public class CommentsServlet extends HttpServlet {
 
   DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+  UserService userService = UserServiceFactory.getUserService();
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
+  
+    response.setContentType("application/json");
     
+    Gson gson = new Gson();
+    CommentsResponse resp;
+
+    if (!userService.isUserLoggedIn()) {
+      String loginURL = userService.createLoginURL("/comments.html");
+      response.sendRedirect(loginURL);
+      return;
+    }
+
     List<Comment> comments = new ArrayList<Comment>();
 
     Query query = new Query("Comment").addSort("timestamp", SortDirection.DESCENDING);
@@ -47,27 +61,32 @@ public class CommentsServlet extends HttpServlet {
 
     for (Entity entity : results.asIterable()) {
       long id = entity.getKey().getId();
-      String username = (String) entity.getProperty("username");
+      String email = (String) entity.getProperty("email");
       String content = (String) entity.getProperty("content");
 
-      Comment comment = new Comment(id, username, content);
+      Comment comment = new Comment(id, email, content);
       comments.add(comment);
     }
 
-    Gson gson = new Gson();
-    String json = gson.toJson(comments);
-    response.setContentType("application/json");
+    resp = new CommentsResponse(comments);
+
+    String json = gson.toJson(resp);
     response.getWriter().println(json);
   }
 
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    String username = request.getParameter("username");
+    if (!userService.isUserLoggedIn()) {
+      String loginURL = userService.createLoginURL("/comments.html");
+      response.sendRedirect(loginURL);
+      return;
+    }
+
     String content = request.getParameter("comment");
     long timestamp = System.currentTimeMillis();
 
     Entity commentEntity = new Entity("Comment");
-    commentEntity.setProperty("username", username);
+    commentEntity.setProperty("email", userService.getCurrentUser().getEmail());
     commentEntity.setProperty("content", content);
     commentEntity.setProperty("timestamp", timestamp);
 

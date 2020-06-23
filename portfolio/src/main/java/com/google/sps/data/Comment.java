@@ -2,12 +2,12 @@ package com.google.sps.data;
 
 public class Comment {
   private long id;
-  private String username;
+  private String email;
   private String content;
 
-  public Comment(long id, String username, String content) {
+  public Comment(long id, String email, String content) {
     this.id = id;
-    this.username = username;
+    this.email = email;
     this.content = content;
   }
 
@@ -15,8 +15,8 @@ public class Comment {
     return this.id;
   }
 
-  public String getUsername() {
-    return this.username;
+  public String getEmail() {
+    return this.email;
   }
 
   public String getContent() {
