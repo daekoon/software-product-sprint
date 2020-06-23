@@ -16,28 +16,29 @@ document.addEventListener('DOMContentLoaded', displayComments(), false);
 
 function displayComments() {
   fetch('/loginservice?redirect_path=\/comments.html').then(response => response.json()).then(response => {
-    const commentsContainer = document.getElementById('content');
+    const loginContainer = document.getElementById('login_status');
     var html = '';
     console.log(response);
     if (!response.loggedIn) {
       html += '<p>You need to be logged in to see this page!</p>';
       html += '<p>Login <a href=\"' + response.loginURL + '\">here</a>.</p>' 
-      commentsContainer.innerHTML = html;
+      loginContainer.innerHTML = html;
       return null;
     } else {
-      return response.logoutURL;
+      html += '<p>Currently logged in as ' + response.currentUserEmail + '</p>';
+      html += '<p>Logout <a href=\"' + response.logoutURL + '\" >here</a>.</p>';
+      loginContainer.innerHTML = html;
+      return true;
     }
-  }).then(logoutURL => {
+  }).then(loggedIn => {
     
-    if (logoutURL == null) {
+    if (!loggedIn) {
       return;
     }
     
     fetch('/comments').then(response => response.json()).then(response => { 
-      const commentsContainer = document.getElementById('content');
+      const commentsContainer = document.getElementById('comments_container');
       var html = ''
-      html += '<p>Currently logged in as ' + response.currentUserEmail + '</p>';
-      html += '<p>Logout <a href=\"' + logoutURL + '\" >here</a>.</p>';
       html += '<h1>Posted Comments</h1><br/>';
       html += '<table id="commentsTable" width="80%">';
       html += '<tr>';

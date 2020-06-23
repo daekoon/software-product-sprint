@@ -25,10 +25,10 @@ public class LoginServlet extends HttpServlet{
 
     if (!userService.isUserLoggedIn()) {
       String loginURL = userService.createLoginURL(redirectPath);
-      resp = new LoginResponse(false, loginURL, null);
+      resp = new LoginResponse(false, loginURL, null, null);
     } else {
       String logoutURL = userService.createLogoutURL(redirectPath);
-      resp = new LoginResponse(true, null, logoutURL);
+      resp = new LoginResponse(true, null, logoutURL, userService.getCurrentUser().getEmail());
     }
     
     String json = gson.toJson(resp);

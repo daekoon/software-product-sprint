@@ -8,12 +8,8 @@ import java.util.List;
 
 public class CommentsResponse {
     private List<Comment> comments;
-    private String currentUserEmail;
 
-    public CommentsResponse(
-            List<Comment> comments,
-            String currentUserEmail) {
+    public CommentsResponse(List<Comment> comments) {
         this.comments = comments;
-        this.currentUserEmail = currentUserEmail;
     } 
 }

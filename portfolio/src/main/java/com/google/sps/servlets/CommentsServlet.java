@@ -34,7 +34,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-/** Servlet that returns some example content. TODO: modify this file to handle comments data */
 @WebServlet("/comments")
 public class CommentsServlet extends HttpServlet {
 
@@ -55,9 +54,6 @@ public class CommentsServlet extends HttpServlet {
       return;
     }
 
-    String logoutURL = userService.createLogoutURL("/index.html");
-    String currentUserEmail = userService.getCurrentUser().getEmail();
-
     List<Comment> comments = new ArrayList<Comment>();
 
     Query query = new Query("Comment").addSort("timestamp", SortDirection.DESCENDING);
@@ -72,7 +68,7 @@ public class CommentsServlet extends HttpServlet {
       comments.add(comment);
     }
 
-    resp = new CommentsResponse(comments, currentUserEmail);
+    resp = new CommentsResponse(comments);
 
     String json = gson.toJson(resp);
     response.getWriter().println(json);
