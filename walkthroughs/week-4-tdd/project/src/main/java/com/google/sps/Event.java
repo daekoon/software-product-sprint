@@ -23,7 +23,7 @@ import java.util.Set;
  * Event is the container class for when a specific group of people are meeting and are therefore
  * busy. Events are considered read-only.
  */
-public final class Event {
+public final class Event implements Comparable<Event>{
   private final String title;
   private final TimeRange when;
   private final Set<String> attendees = new HashSet<>();
@@ -88,9 +88,16 @@ public final class Event {
     return other instanceof Event && equals(this, (Event) other);
   }
 
+  @Override 
+  public int compareTo(Event other) {
+    return this.when.compareTo(other.when);
+  }
+
   private static boolean equals(Event a, Event b) {
     // {@code attendees} must be a set for equals to work as expected. According to the {@code Set}
     // interface documentation, equals will check for set-equality across all set implementations.
     return a.title.equals(b.title) && a.when.equals(b.when) && a.attendees.equals(b.attendees);
   }
+
+  
 }

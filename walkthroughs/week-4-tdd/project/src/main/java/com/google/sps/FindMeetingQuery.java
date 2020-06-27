@@ -14,10 +14,55 @@
 
 package com.google.sps;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 
 public final class FindMeetingQuery {
   public Collection<TimeRange> query(Collection<Event> events, MeetingRequest request) {
-    throw new UnsupportedOperationException("TODO: Implement this method.");
+    List<Event> existingEvents = new ArrayList<Event>(events);
+    List<TimeRange> possibleSchedule = new ArrayList<TimeRange>();
+
+    Collections.sort(existingEvents);
+    int curStartTime = 0;
+    TimeRange eventTimeRange;
+    boolean contains;
+
+    for (Event event : existingEvents) {
+      contains = false;
+      for (String participant : request.getAttendees()) {
+        if (event.getAttendees().contains(participant)) {
+          contains = true;
+          break;
+        }
+      }
+      if (!contains) {
+        continue;
+      }
+      
+      eventTimeRange = event.getWhen();
+      if (eventTimeRange.start() <= curStartTime) {
+        if (eventTimeRange.end() <= curStartTime) {
+          continue;
+        }
+        curStartTime = eventTimeRange.end();
+        continue;
+      }
+
+      if (eventTimeRange.start() - curStartTime >= request.getDuration()) {
+        possibleSchedule.add(TimeRange.fromStartDuration(curStartTime, eventTimeRange.start() - curStartTime));
+      }
+      curStartTime = eventTimeRange.end();
+
+    }
+
+    if (curStartTime != TimeRange.END_OF_DAY) {
+      if (TimeRange.END_OF_DAY - curStartTime >= request.getDuration()) {
+        possibleSchedule.add(TimeRange.fromStartDuration(curStartTime, TimeRange.END_OF_DAY - curStartTime + 1));
+      }
+    }
+
+    return possibleSchedule;
   }
 }

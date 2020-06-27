@@ -20,7 +20,7 @@ import java.util.Comparator;
  * Class representing a span of time, enforcing properties (e.g. start comes before end) and
  * providing methods to make ranges easier to work with (e.g. {@code overlaps}).
  */
-public final class TimeRange {
+public final class TimeRange implements Comparable<TimeRange>{
   public static final int START_OF_DAY = getTimeInMinutes(0, 0);
   public static final int END_OF_DAY = getTimeInMinutes(23, 59);
 
@@ -133,6 +133,14 @@ public final class TimeRange {
   @Override
   public String toString() {
     return String.format("Range: [%d, %d)", start, start + duration);
+  }
+
+  @Override
+  public int compareTo(TimeRange other) {
+    if (this.start == other.start) {
+      return Integer.compare(other.duration, this.duration);
+    }
+    return Integer.compare(this.start, other.start);
   }
 
   private static boolean contains(TimeRange range, int point) {
