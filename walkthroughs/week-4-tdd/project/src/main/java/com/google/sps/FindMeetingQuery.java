@@ -35,6 +35,7 @@ public final class FindMeetingQuery {
       }
       
       eventTimeRange = event.getWhen();
+
       if (eventTimeRange.start() <= curStartTime) {
         if (eventTimeRange.end() <= curStartTime) {
           continue;
@@ -43,15 +44,24 @@ public final class FindMeetingQuery {
         continue;
       }
 
-      if (eventTimeRange.start() - curStartTime >= request.getDuration()) {
-        possibleSchedule.add(TimeRange.fromStartDuration(curStartTime, eventTimeRange.start() - curStartTime));
-      }
+      addToScheduleIfMeetingFitsBeforeEvent(possibleSchedule, request, curStartTime, eventTimeRange);
       curStartTime = eventTimeRange.end();
     }
 
     addToScheduleIfMeetingFitsAtEndOfDay(possibleSchedule, request, curStartTime);
 
     return possibleSchedule;
+  }
+
+  private void addToScheduleIfMeetingFitsBeforeEvent(
+      List<TimeRange> possibleSchedule,
+      MeetingRequest request,
+      int curStartTime,
+      TimeRange eventTimeRange) {
+
+    if (eventTimeRange.start() - curStartTime >= request.getDuration()) {
+      possibleSchedule.add(TimeRange.fromStartDuration(curStartTime, eventTimeRange.start() - curStartTime));
+    }
   }
 
   private void addToScheduleIfMeetingFitsAtEndOfDay(List<TimeRange> possibleSchedule, MeetingRequest request, int curStartTime) {
