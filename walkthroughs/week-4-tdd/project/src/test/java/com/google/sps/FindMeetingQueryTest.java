@@ -18,7 +18,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -64,6 +66,12 @@ public final class FindMeetingQueryTest {
     Collection<TimeRange> expected = Arrays.asList(TimeRange.WHOLE_DAY);
 
     Assert.assertEquals(expected, actual);
+
+    // If there are other events scheduled in the day
+    actual = query.query(Arrays.asList(Events.events), request);
+    expected = Arrays.asList(TimeRange.WHOLE_DAY);
+
+    Assert.assertEquals(expected, actual);
   }
 
   @Test
@@ -76,6 +84,18 @@ public final class FindMeetingQueryTest {
     Collection<TimeRange> expected = Arrays.asList();
 
     Assert.assertEquals(expected, actual);
+
+    // Case when there are other events scheduled
+    Collection<Event> testCaseWithSchedules = new ArrayList<Event>(Arrays.asList(Events.events));
+    Set<String> testCaseAttendees = new HashSet<String>();
+    testCaseAttendees.add(PERSON_A);
+
+    testCaseWithSchedules.add(new Event("Test 1", TimeRange.fromStartDuration(80, 40), testCaseAttendees));
+    actual = query.query(testCaseWithSchedules, request);
+    expected = Arrays.asList();
+
+    Assert.assertEquals(expected, actual);
+
   }
 
   @Test
