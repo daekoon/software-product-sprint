@@ -30,14 +30,7 @@ public final class FindMeetingQuery {
     boolean contains;
 
     for (Event event : existingEvents) {
-      contains = false;
-      for (String participant : request.getAttendees()) {
-        if (event.getAttendees().contains(participant)) {
-          contains = true;
-          break;
-        }
-      }
-      if (!contains) {
+      if (Collections.disjoint(event.getAttendees(), request.getAttendees())) {
         continue;
       }
       
