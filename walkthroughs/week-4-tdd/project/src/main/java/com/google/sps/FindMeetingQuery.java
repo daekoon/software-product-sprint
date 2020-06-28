@@ -47,15 +47,18 @@ public final class FindMeetingQuery {
         possibleSchedule.add(TimeRange.fromStartDuration(curStartTime, eventTimeRange.start() - curStartTime));
       }
       curStartTime = eventTimeRange.end();
-
     }
 
+    addToScheduleIfMeetingFitsAtEndOfDay(possibleSchedule, request, curStartTime);
+
+    return possibleSchedule;
+  }
+
+  private void addToScheduleIfMeetingFitsAtEndOfDay(List<TimeRange> possibleSchedule, MeetingRequest request, int curStartTime) {
     if (curStartTime != TimeRange.END_OF_DAY) {
       if (TimeRange.END_OF_DAY - curStartTime >= request.getDuration()) {
         possibleSchedule.add(TimeRange.fromStartDuration(curStartTime, TimeRange.END_OF_DAY - curStartTime + 1));
       }
     }
-
-    return possibleSchedule;
   }
 }
