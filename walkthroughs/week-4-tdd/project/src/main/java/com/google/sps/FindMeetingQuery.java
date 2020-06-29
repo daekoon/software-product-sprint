@@ -27,7 +27,6 @@ public final class FindMeetingQuery {
     Collections.sort(existingEvents);
     int curStartTime = 0;
     TimeRange eventTimeRange;
-    boolean contains;
 
     for (Event event : existingEvents) {
       if (Collections.disjoint(event.getAttendees(), request.getAttendees())) {
