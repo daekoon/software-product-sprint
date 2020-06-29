@@ -21,8 +21,18 @@ import java.util.List;
 
 public final class FindMeetingQuery {
   public Collection<TimeRange> query(Collection<Event> events, MeetingRequest request) {
+
     List<Event> existingEvents = new ArrayList<Event>(events);
     List<TimeRange> possibleSchedule = new ArrayList<TimeRange>();
+
+    if (request.getDuration() > TimeRange.WHOLE_DAY.duration()) {
+      return possibleSchedule;
+    }
+
+    if (request.getAttendees().size() == 0) {
+      possibleSchedule.add(TimeRange.fromStartEnd(TimeRange.START_OF_DAY, TimeRange.END_OF_DAY, true));
+      return possibleSchedule;
+    }
 
     Collections.sort(existingEvents);
     int curStartTime = 0;
