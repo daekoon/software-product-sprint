@@ -66,10 +66,14 @@ public final class FindMeetingQueryTest {
     Collection<TimeRange> expected = Arrays.asList(TimeRange.WHOLE_DAY);
 
     Assert.assertEquals(expected, actual);
+  }
 
-    // If there are other events scheduled in the day
-    actual = query.query(Arrays.asList(Events.events), request);
-    expected = Arrays.asList(TimeRange.WHOLE_DAY);
+  @Test
+  public void optionsForNoAttendeesWithExistingSchedules() {
+    MeetingRequest request = new MeetingRequest(NO_ATTENDEES, DURATION_1_HOUR);
+
+    Collection<TimeRange> actual = query.query(Arrays.asList(Events.events), request);
+    Collection<TimeRange> expected = Arrays.asList(TimeRange.WHOLE_DAY);
 
     Assert.assertEquals(expected, actual);
   }
@@ -84,18 +88,19 @@ public final class FindMeetingQueryTest {
     Collection<TimeRange> expected = Arrays.asList();
 
     Assert.assertEquals(expected, actual);
+  }
 
-    // Case when there are other events scheduled
+  @Test
+  public void noOptionsForTooLongOfARequestWithExistingSchedules() {
     Collection<Event> testCaseWithSchedules = new ArrayList<Event>(Arrays.asList(Events.events));
     Set<String> testCaseAttendees = new HashSet<String>();
     testCaseAttendees.add(PERSON_A);
 
     testCaseWithSchedules.add(new Event("Test 1", TimeRange.fromStartDuration(80, 40), testCaseAttendees));
-    actual = query.query(testCaseWithSchedules, request);
-    expected = Arrays.asList();
+    Collection<TimeRange> actual = query.query(testCaseWithSchedules, request);
+    Collection<TimeRange> expected = Arrays.asList();
 
     Assert.assertEquals(expected, actual);
-
   }
 
   @Test
