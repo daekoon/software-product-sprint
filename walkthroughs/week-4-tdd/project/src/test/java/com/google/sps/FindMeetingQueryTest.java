@@ -92,6 +92,9 @@ public final class FindMeetingQueryTest {
 
   @Test
   public void noOptionsForTooLongOfARequestWithExistingSchedules() {
+    int duration = TimeRange.WHOLE_DAY.duration() + 1;
+    MeetingRequest request = new MeetingRequest(Arrays.asList(PERSON_A), duration);
+
     Collection<Event> testCaseWithSchedules = new ArrayList<Event>(Arrays.asList(Events.events));
     Set<String> testCaseAttendees = new HashSet<String>();
     testCaseAttendees.add(PERSON_A);
