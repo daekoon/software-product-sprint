@@ -18,7 +18,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -67,12 +69,38 @@ public final class FindMeetingQueryTest {
   }
 
   @Test
+  public void optionsForNoAttendeesWithExistingSchedules() {
+    MeetingRequest request = new MeetingRequest(NO_ATTENDEES, DURATION_1_HOUR);
+
+    Collection<TimeRange> actual = query.query(Arrays.asList(Events.events), request);
+    Collection<TimeRange> expected = Arrays.asList(TimeRange.WHOLE_DAY);
+
+    Assert.assertEquals(expected, actual);
+  }
+
+  @Test
   public void noOptionsForTooLongOfARequest() {
     // The duration should be longer than a day. This means there should be no options.
     int duration = TimeRange.WHOLE_DAY.duration() + 1;
     MeetingRequest request = new MeetingRequest(Arrays.asList(PERSON_A), duration);
 
     Collection<TimeRange> actual = query.query(NO_EVENTS, request);
+    Collection<TimeRange> expected = Arrays.asList();
+
+    Assert.assertEquals(expected, actual);
+  }
+
+  @Test
+  public void noOptionsForTooLongOfARequestWithExistingSchedules() {
+    int duration = TimeRange.WHOLE_DAY.duration() + 1;
+    MeetingRequest request = new MeetingRequest(Arrays.asList(PERSON_A), duration);
+
+    Collection<Event> testCaseWithSchedules = new ArrayList<Event>(Arrays.asList(Events.events));
+    Set<String> testCaseAttendees = new HashSet<String>();
+    testCaseAttendees.add(PERSON_A);
+
+    testCaseWithSchedules.add(new Event("Test 1", TimeRange.fromStartDuration(80, 40), testCaseAttendees));
+    Collection<TimeRange> actual = query.query(testCaseWithSchedules, request);
     Collection<TimeRange> expected = Arrays.asList();
 
     Assert.assertEquals(expected, actual);

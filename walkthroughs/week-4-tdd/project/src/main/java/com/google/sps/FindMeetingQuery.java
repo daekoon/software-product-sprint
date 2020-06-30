@@ -14,10 +14,70 @@
 
 package com.google.sps;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 
 public final class FindMeetingQuery {
   public Collection<TimeRange> query(Collection<Event> events, MeetingRequest request) {
-    throw new UnsupportedOperationException("TODO: Implement this method.");
+
+    List<Event> existingEvents = new ArrayList<Event>(events);
+    List<TimeRange> possibleSchedule = new ArrayList<TimeRange>();
+
+    if (request.getDuration() > TimeRange.WHOLE_DAY.duration()) {
+      return possibleSchedule;
+    }
+
+    if (request.getAttendees().size() == 0) {
+      possibleSchedule.add(TimeRange.fromStartEnd(TimeRange.START_OF_DAY, TimeRange.END_OF_DAY, true));
+      return possibleSchedule;
+    }
+
+    Collections.sort(existingEvents);
+    int curStartTime = 0;
+    TimeRange eventTimeRange;
+
+    for (Event event : existingEvents) {
+      if (Collections.disjoint(event.getAttendees(), request.getAttendees())) {
+        continue;
+      }
+      
+      eventTimeRange = event.getWhen();
+
+      if (eventTimeRange.start() <= curStartTime) {
+        if (eventTimeRange.end() <= curStartTime) {
+          continue;
+        }
+        curStartTime = eventTimeRange.end();
+        continue;
+      }
+
+      addToScheduleIfMeetingFitsBeforeEvent(possibleSchedule, request, curStartTime, eventTimeRange);
+      curStartTime = eventTimeRange.end();
+    }
+
+    addToScheduleIfMeetingFitsAtEndOfDay(possibleSchedule, request, curStartTime);
+
+    return possibleSchedule;
+  }
+
+  private void addToScheduleIfMeetingFitsBeforeEvent(
+      List<TimeRange> possibleSchedule,
+      MeetingRequest request,
+      int curStartTime,
+      TimeRange eventTimeRange) {
+
+    if (eventTimeRange.start() - curStartTime >= request.getDuration()) {
+      possibleSchedule.add(TimeRange.fromStartDuration(curStartTime, eventTimeRange.start() - curStartTime));
+    }
+  }
+
+  private void addToScheduleIfMeetingFitsAtEndOfDay(List<TimeRange> possibleSchedule, MeetingRequest request, int curStartTime) {
+    if (curStartTime != TimeRange.END_OF_DAY) {
+      if (TimeRange.END_OF_DAY - curStartTime >= request.getDuration()) {
+        possibleSchedule.add(TimeRange.fromStartDuration(curStartTime, TimeRange.END_OF_DAY - curStartTime + 1));
+      }
+    }
   }
 }
